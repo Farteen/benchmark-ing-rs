@@ -1,0 +1,19 @@
+[package]
+name = "benchmark-ing"
+version = "0.1.0"
+authors = ["Jiawei Xu <jiawei.xu@hylink.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[dev-dependencies]
+criterion = "0.3"
+
+[lib]
+bench = false
+
+[[bench]]
+name = "fibonacci"
+harness = false
