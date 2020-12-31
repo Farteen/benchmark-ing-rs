@@ -1,3 +1,5 @@
+use serde::{Deserialize};
+
 #[inline]
 pub fn fibonacci(n: u64) -> u64 {
     let mut a = 0;
@@ -14,4 +16,9 @@ pub fn fibonacci(n: u64) -> u64 {
             // fibonacci(n-1) + fibonacci(n-2)
         },
     }
+}
+
+#[derive(Deserialize)]
+pub struct A {
+    pub a: String,
 }
