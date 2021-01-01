@@ -5,6 +5,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 use std::str::FromStr;
+use std::env;
 
 fn serde_json_deserialize(i: &[u8]) -> Value {
     let a = serde_json::from_slice(i).unwrap();
@@ -16,7 +17,9 @@ fn throughput_bench(c: &mut Criterion) {
 
     // group.sample_size(1000000);
     let mut file_byte = &mut Vec::new();
-    let file_path = PathBuf::from_str("xx/data/canada.json").unwrap();
+    let mut file_path = env::current_dir().unwrap();
+    file_path.push(PathBuf::from_str("./data/canada.json").unwrap());
+    println!("{:?}", file_path.clone());
     File::open(file_path)
         .unwrap()
         .read_to_end(file_byte)
