@@ -1,4 +1,4 @@
-use serde::{Deserialize};
+use serde::Deserialize;
 
 #[inline]
 pub fn fibonacci(n: u64) -> u64 {
@@ -14,7 +14,7 @@ pub fn fibonacci(n: u64) -> u64 {
             }
             b
             // fibonacci(n-1) + fibonacci(n-2)
-        },
+        }
     }
 }
 
