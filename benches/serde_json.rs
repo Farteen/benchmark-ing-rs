@@ -1,11 +1,11 @@
 use benchmark_ing::A;
 use criterion::*;
 use serde_json::Value;
+use std::env;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 use std::str::FromStr;
-use std::env;
 
 fn serde_json_deserialize(i: &[u8]) -> Value {
     let a = serde_json::from_slice(i).unwrap();

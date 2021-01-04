@@ -1,18 +1,18 @@
 use benchmark_ing::A;
 use criterion::*;
+use simd_json::value::owned::Value;
+use std::env;
 use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 use std::str::FromStr;
-use std::env;
-use simd_json::value::owned::Value;
 
 fn simd_json_deserialize(i: &mut [u8]) -> Value {
     simd_json::to_owned_value(i).unwrap()
 }
 
 fn throughput_bench(c: &mut Criterion) {
-    let mut group = c.benchmark_group("serde-json-throughput-group");
+    let mut group = c.benchmark_group("simd-json-throughput-group");
 
     // group.sample_size(1000000);
     let mut file_byte = &mut Vec::new();
