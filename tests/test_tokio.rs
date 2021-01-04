@@ -131,7 +131,8 @@ mod test {
         let (mut tx2, mut rx2) = mpsc::channel(128);
 
         tokio::spawn(async move {
-
+            tx1.send("1").await.unwrap();
+            tx2.send("2").await.unwrap();
         });
 
         tokio::select! {
@@ -141,36 +142,67 @@ mod test {
             Some(v) = rx2.recv() => {
                 println!("Got {:?} from rx2", v);
             }
-            else {
+            else => {
                 println!("Both channels closed");
             }
         }
     }
 
-    //  select! guarantees that only single handler runs
-    async fn race(
-        data: &[u8],
-        addr1: SocketAddr,
-        addr2: SocketAddr,
-    ) -> io::Result<()> {
-        tokio::select! {
-        Ok(_) = async {
-            let mut socket = TcpStream::connect(addr1).await?;
-            socket.write_all(data).await?;
-            Ok::<_, io::Error>(())
-        } => {}
-        Ok(_) = async {
-            let mut socket = TcpStream::connect(addr2).await?;
-            socket.write_all(data).await:/
-            Ok::<_, io::Error>(())
-        } => {}
-        else => {}
-        }
-        Ok(())
-    }
+    //  !!!select! guarantees that only single handler runs
+    // async fn race(
+    //     data: &[u8],
+    //     addr1: SocketAddr,
+    //     addr2: SocketAddr,
+    // ) -> io::Result<()> {
+    //     tokio::select! {
+    //     Ok(_) = async {
+    //         let mut socket = TcpStream::connect(addr1).await?;
+    //         socket.write_all(data).await?;
+    //         Ok::<_, io::Error>(())
+    //     } => {}
+    //     Ok(_) = async {
+    //         let mut socket = TcpStream::connect(addr2).await?;
+    //         socket.write_all(data).await:/
+    //         Ok::<_, io::Error>(())
+    //     } => {}
+    //     else => {}
+    //     }
+    //     Ok(())
+    // }
 
     #[tokio::test]
     async fn test_borrowing() {
 
+    }
+
+    #[tokio::test]
+    async fn test_loop() {
+        let (tx1, mut rx1) = mpsc::channel(128);
+        let (tx2, mut rx2) = mpsc::channel(128);
+        let (tx3, mut rx3) = mpsc::channel(128);
+        tokio::spawn(async move {
+            let mut i: i32 = 0;
+            loop {
+                match i {
+                    _ if i % 3 == 0 => tx1.send("1").await.unwrap(),
+                    _ if i % 3 == 1 => tx2.send("2").await.unwrap(),
+                    _ if i % 3 == 2 => tx3.send("3").await.unwrap(),
+                    _ => {
+                    }
+                }
+                i += 1
+            }
+        });
+        loop {
+            let msg = tokio::select! {
+                Some(msg) = rx1.recv() => msg,
+                Some(msg) = rx2.recv() => msg,
+                Some(msg) = rx3.recv() => msg,
+                else => {break}
+            };
+            println!("Got {}", msg);
+        }
+
+        println!("All channels closed");
     }
 }
