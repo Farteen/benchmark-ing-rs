@@ -1,12 +1,12 @@
 mod test {
-    use tokio::sync::oneshot;
-    use tokio::sync::mpsc;
-    use tokio::net::{TcpStream, TcpListener};
-    use tokio::*;
     use std::future::Future;
+    use std::net::SocketAddr;
     use std::task::Context;
     use tokio::macros::support::{Pin, Poll};
-    use std::net::SocketAddr;
+    use tokio::net::{TcpListener, TcpStream};
+    use tokio::sync::mpsc;
+    use tokio::sync::oneshot;
+    use tokio::*;
 
     async fn some_operaion() -> String {
         tokio::time::sleep(std::time::Duration::from_secs(1)).await;
@@ -79,10 +79,7 @@ mod test {
             tokio::time::sleep(std::time::Duration::from_secs(2));
             tx2.send("1");
         });
-        MySelect {
-            rx1,
-            rx2,
-        }.await;
+        MySelect { rx1, rx2 }.await;
     }
 
     #[tokio::test]
@@ -171,9 +168,7 @@ mod test {
     // }
 
     #[tokio::test]
-    async fn test_borrowing() {
-
-    }
+    async fn test_borrowing() {}
 
     #[tokio::test]
     async fn test_loop() {
@@ -187,8 +182,7 @@ mod test {
                     _ if i % 3 == 0 => tx1.send("1").await.unwrap(),
                     _ if i % 3 == 1 => tx2.send("2").await.unwrap(),
                     _ if i % 3 == 2 => tx3.send("3").await.unwrap(),
-                    _ => {
-                    }
+                    _ => {}
                 }
                 i += 1
             }
@@ -202,7 +196,7 @@ mod test {
             };
             println!("Got {}", msg);
         }
-
+        tokio::task::yield_now();
         println!("All channels closed");
     }
 }
